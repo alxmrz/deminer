@@ -4,11 +4,15 @@ namespace Sapper;
 
 use SDL2\KeyCodes;
 use SDL2\LibSDL2;
-use SDL2\SDLColor;
 use SDL2\SDLEvent;
 
 class Game
 {
+    private const int WINDOW_START_X = 200;
+    private const int WINDOW_START_Y = 200;
+    private const int WINDOW_WIDTH = 900;
+    private const int WINDOW_HEIGHT = 600;
+
     private LibSDL2 $sdl;
     private Window $window;
 
@@ -21,7 +25,13 @@ class Game
     public function init(): int
     {
         $this->sdl = LibSDL2::load();
-        $this->window = new Window("Miner", 50, 50, 500, 500);
+        $this->window = new Window(
+            "Miner",
+            self::WINDOW_START_X,
+            self::WINDOW_START_Y,
+            self::WINDOW_WIDTH,
+            self::WINDOW_HEIGHT
+        );
 
         $this->window->display();
 

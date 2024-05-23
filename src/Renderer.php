@@ -3,6 +3,7 @@
 namespace Sapper;
 
 use SDL2\LibSDL2;
+use SDL2\LibSDL2Image;
 use SDL2\LibSDL2TTF;
 use SDL2\SDLColor;
 use SDL2\SDLRect;
@@ -15,11 +16,14 @@ class Renderer
     private SDLRenderer $renderer;
     private LibSDL2TTF $ttf;
     private array $fonts = [];
+    private LibSDL2Image $imager;
 
     public function __construct(Window $window)
     {
         $this->sdl = LibSDL2::load();
         $this->ttf = LibSDL2TTF::load();
+        $this->imager = LibSDL2Image::load();
+
         $this->window = $window;
     }
 
@@ -82,12 +86,8 @@ class Renderer
     {
         $this->sdl->SDL_SetRenderDrawColor($this->renderer, 160, 160, 160, 0);
 
-        $mainRect = new SDLRect(0, 0, 800, 600);
+        $mainRect = new SDLRect(0, 0, 900, 600);
 
-        $mainRect->setX(0);
-        $mainRect->setY(0);
-        $mainRect->setWidth(800);
-        $mainRect->setHeight(600);
 
         if ($this->sdl->SDL_RenderFillRect($this->renderer, $mainRect) < 0) {
             echo "ERROR ON INIT: " . $this->sdl->SDL_GetError();
@@ -147,6 +147,36 @@ class Renderer
 
         $this->sdl->SDL_DestroyTexture($textureMessage);
         $this->sdl->SDL_FreeSurface($surfaceMessage);
+    }
+
+    public function displayImage(SDLRect $rect, string $image): void
+    {
+        $image = $this->imager->IMG_Load($image);
+        if ($image === null) {
+            printf("Can't open image: %s\n", $this->sdl->SDL_GetError());
+            $this->window->close();
+
+            exit();
+        }
+
+        $textureMessage = $this->sdl->SDL_CreateTextureFromSurface($this->renderer, $image);
+        if (!$textureMessage) {
+            printf("Can't create texture: %s\n", $this->sdl->SDL_GetError());
+            $this->sdl->SDL_FreeSurface($image);
+
+            $this->window->close();
+
+            exit();
+        }
+
+        if ($this->sdl->SDL_RenderCopy($this->renderer, $textureMessage, null, $rect) !== 0) {
+            printf("Error on copy: %s\n", $this->sdl->SDL_GetError());
+
+            $this->sdl->SDL_FreeSurface($image);
+            $this->window->close();
+
+            exit();
+        }
     }
 
     private function getFont(string $path, int $size): object

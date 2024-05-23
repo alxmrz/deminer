@@ -15,17 +15,17 @@ class GameState
     public const int MOD_16_X_8 = 1;
     public const int MOD_30_X_8 = 2;
 
-    private array $modes = [
-        [8, 8],
-        [16, 16],
-        [30, 16],
+    public array $modes = [
+        [8, 8, 75],
+        [16, 16, 50],
+        [30, 16, 25],
     ];
 
     /**
      * @var GameObject[]
      */
     public array $gameObjects = [];
-    private ?int $mode = null;
+    public ?int $mode = null;
     private bool $isGameStarted = false;
     /**
      * @var true
@@ -72,14 +72,14 @@ class GameState
 
         if ($this->mode !== null && !$this->isGameStarted) {
             $color = new SDLColor(30, 30, 30, 0);
-
+            $fWidth = $this->modes[$this->mode][2];
             $xCount = $this->modes[$this->mode][0];
             $yCount = $this->modes[$this->mode][1];
             $minesAvailable = floor(15 * ($xCount * $yCount) / 100);
 
             for ($i = 0; $i < $xCount; $i++) {
                 for ($j = 0; $j < $yCount; $j++) {
-                    $field = new Field(25 * $i, 25 * $j, 25, 25, $color);
+                    $field = new Field($fWidth * $i, $fWidth * $j, $fWidth, $fWidth, $color);
                     $field->gameState = $this;
 
                     $this->gameObjects[] = $field;

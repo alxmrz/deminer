@@ -3,6 +3,7 @@
 namespace Sapper;
 
 use SDL2\SDLColor;
+use SDL2\SDLRect;
 
 class Field extends GameObject
 {
@@ -45,7 +46,15 @@ class Field extends GameObject
         if ($event->isLeftClick && !$this->isMarked()) {
             $this->isOpen = true;
             if ($this->isMine) {
-                $this->renderType->color = new SDLColor(255, 0, 0, 0);
+                $this->renderType = new Image(
+                    __DIR__ . '/../resources/mine.png',
+                    new SDLRect(
+                        $this->renderType->x,
+                        $this->renderType->y,
+                        $this->renderType->width,
+                        $this->renderType->height
+                    )
+                );
                 $this->gameState->setGameOver();
             } else {
                 $minesCount = 0;
@@ -53,7 +62,6 @@ class Field extends GameObject
 
                 foreach ($this->gameState->getFields() as $gameObject) {
                     if ($gameObject instanceof Field) {
-
                         if (count($fieldsFound) === 8) {
                             break;
                         }
@@ -79,19 +87,28 @@ class Field extends GameObject
                     }
                 }
 
-                $this->renderType = new Text(
-                    $this->renderType->x,
-                    $this->renderType->y,
-                    $this->renderType->width,
-                    $this->renderType->height,
-                    new SDLColor(
-                        $this->textColors[$minesCount][0],
-                        $this->textColors[$minesCount][1],
-                        $this->textColors[$minesCount][2],
-                        0
-                    ),
-                    "$minesCount"
-                );
+                if ($minesCount === 0) {
+                    $this->renderType = new Rectangle(
+                        $this->renderType->x,
+                        $this->renderType->y,
+                        $this->renderType->width,
+                        $this->renderType->height, new SDLColor(255, 255, 255, 0)
+                    );
+                } else {
+                    $this->renderType = new Text(
+                        $this->renderType->x,
+                        $this->renderType->y,
+                        $this->renderType->width,
+                        $this->renderType->height,
+                        new SDLColor(
+                            $this->textColors[$minesCount][0],
+                            $this->textColors[$minesCount][1],
+                            $this->textColors[$minesCount][2],
+                            0
+                        ),
+                        "$minesCount"
+                    );
+                }
             }
 
             return;
@@ -99,14 +116,35 @@ class Field extends GameObject
 
         if ($event->isRightClick) {
             if (!$this->isMarked()) {
-                $this->renderType->color = new SDLColor(255, 0, 255, 0);
+                $this->renderType = new Image(
+                    __DIR__ . '/../resources/flag.png',
+                    new SDLRect(
+                        $this->renderType->x,
+                        $this->renderType->y,
+                        $this->renderType->width,
+                        $this->renderType->height
+                    )
+                );
                 $this->markedAsFlag = true;
             } elseif ($this->markedAsFlag) {
-                $this->renderType->color = new SDLColor(0, 255, 255, 0);
+                $this->renderType = new Image(
+                    __DIR__ . '/../resources/isFlag.png',
+                    new SDLRect(
+                        $this->renderType->x,
+                        $this->renderType->y,
+                        $this->renderType->width,
+                        $this->renderType->height
+                    )
+                );
                 $this->markedAsFlag = false;
                 $this->marksAsUnsure = true;
             } else {
-                $this->renderType->color = new SDLColor(30, 30, 30, 0);
+                $this->renderType = new Rectangle(
+                    $this->renderType->x,
+                    $this->renderType->y,
+                    $this->renderType->width,
+                    $this->renderType->height, new SDLColor(30, 30, 30, 0)
+                );
                 $this->markedAsFlag = false;
                 $this->marksAsUnsure = false;
             }
@@ -120,14 +158,15 @@ class Field extends GameObject
 
     private function hasNeighboor(Field $gameObject): bool
     {
-        $isLeftN = $gameObject->x === ($this->x - 25) && $gameObject->y === $this->y;
-        $isTopLeftN = $gameObject->x === ($this->x - 25) && $gameObject->y === ($this->y - 25);
-        $isTopN = $gameObject->x === $this->x && $gameObject->y === ($this->y - 25);
-        $isTopRightN = $gameObject->x === ($this->x + 25) && $gameObject->y === ($this->y - 25);
-        $isRightN = $gameObject->x === ($this->x + 25) && $gameObject->y === $this->y;
-        $isRightBottomN = $gameObject->x === ($this->x + 25) && $gameObject->y === ($this->y + 25);
-        $isBottomN = $gameObject->x === $this->x && $gameObject->y === ($this->y + 25);
-        $isLeftBottomN = $gameObject->x === ($this->x - 25) && $gameObject->y === ($this->y + 25);
+        $fWidth = $this->gameState->modes[$this->gameState->mode][2];
+        $isLeftN = $gameObject->x === ($this->x - $fWidth) && $gameObject->y === $this->y;
+        $isTopLeftN = $gameObject->x === ($this->x - $fWidth) && $gameObject->y === ($this->y - $fWidth);
+        $isTopN = $gameObject->x === $this->x && $gameObject->y === ($this->y - $fWidth);
+        $isTopRightN = $gameObject->x === ($this->x + $fWidth) && $gameObject->y === ($this->y - $fWidth);
+        $isRightN = $gameObject->x === ($this->x + $fWidth) && $gameObject->y === $this->y;
+        $isRightBottomN = $gameObject->x === ($this->x + $fWidth) && $gameObject->y === ($this->y + $fWidth);
+        $isBottomN = $gameObject->x === $this->x && $gameObject->y === ($this->y + $fWidth);
+        $isLeftBottomN = $gameObject->x === ($this->x - $fWidth) && $gameObject->y === ($this->y + $fWidth);
 
         return $isLeftN
             || $isTopLeftN

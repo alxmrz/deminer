@@ -46,11 +46,12 @@ class Field extends GameObject
             $this->isOpen = true;
             if ($this->isMine) {
                 $this->renderType->color = new SDLColor(255, 0, 0, 0);
+                $this->gameState->setGameOver();
             } else {
                 $minesCount = 0;
                 $fieldsFound = [];
 
-                foreach ($this->gameState->gameObjects as $gameObject) {
+                foreach ($this->gameState->getFields() as $gameObject) {
                     if ($gameObject instanceof Field) {
 
                         if (count($fieldsFound) === 8) {

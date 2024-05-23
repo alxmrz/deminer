@@ -14,7 +14,7 @@ class Renderer
     private Window $window;
     private SDLRenderer $renderer;
     private LibSDL2TTF $ttf;
-    private $font = null;
+    private array $fonts = [];
 
     public function __construct(Window $window)
     {
@@ -25,7 +25,9 @@ class Renderer
 
     public function __destruct()
     {
-        $this->ttf->TTF_CloseFont($this->font);
+        foreach ($this->fonts as $font) {
+            $this->ttf->TTF_CloseFont($font);
+        }
         $this->ttf->TTF_Quit();
     }
 
@@ -93,7 +95,7 @@ class Renderer
         }
     }
 
-    public function displayRect(int $x, int $y, int $width, int $height, SDLColor $color): void
+    public function fillRect(int $x, int $y, int $width, int $height, SDLColor $color): void
     {
         $this->sdl->SDL_SetRenderDrawColor($this->renderer, $color->r, $color->g, $color->b, $color->a);
 
@@ -105,9 +107,9 @@ class Renderer
         }
     }
 
-    public function displayText(int $x, int $y, int $width, int $height, SDLColor $color, string $text): void
+    public function displayText(int $x, int $y, int $width, int $height, SDLColor $color, string $text, int $size = 24): void
     {
-        $sans = $this->getFont(__DIR__ . '/../resources/Sans.ttf', 24);
+        $sans = $this->getFont(__DIR__ . '/../resources/Sans.ttf', $size);
 
         $surfaceMessage = $this->ttf->TTF_RenderText_Solid($sans, $text, $color);
         if ($surfaceMessage === null) {
@@ -149,7 +151,7 @@ class Renderer
 
     private function getFont(string $path, int $size): object
     {
-        if (!$this->font) {
+        if (!isset($this->fonts[$size])) {
             $sans = $this->ttf->TTF_OpenFont($path,$size);
             if ($sans === null) {
                 printf("Can't create font: %s\n", $this->sdl->SDL_GetError());
@@ -159,9 +161,9 @@ class Renderer
                 exit();
             }
 
-            $this->font = $sans;
+            $this->fonts[$size] = $sans;
         }
 
-        return $this->font;
+        return $this->fonts[$size];
     }
 }

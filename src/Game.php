@@ -71,6 +71,13 @@ class Game
                     $this->setClickEvent($eventClick);
                 }
             }
+
+            if (SDLEvent::SDL_KEYDOWN == $windowEvent->type) {
+                if ($windowEvent->key->keysym->sym == KeyCodes::SDLK_SPACE) {
+                    $this->state->restart();
+                    printf("Pressed space\n");
+                }
+            }
         }
     }
 

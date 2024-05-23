@@ -21,6 +21,6 @@ class RenderType
 
     public function display(Renderer $renderer): void
     {
-        $renderer->displayRect($this->x, $this->y, $this->width, $this->height, $this->color);
+        $renderer->fillRect($this->x, $this->y, $this->width, $this->height, $this->color);
     }
 }

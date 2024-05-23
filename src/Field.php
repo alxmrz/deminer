@@ -13,7 +13,7 @@ class Field extends GameObject
     public bool $isOpen = false;
     public bool $markedAsFlag = false;
     public bool $marksAsUnsure = false;
-    public Game $game;
+    public GameState $gameState;
     public int $x;
     public int $y;
 
@@ -50,7 +50,7 @@ class Field extends GameObject
                 $minesCount = 0;
                 $fieldsFound = [];
 
-                foreach ($this->game->gameObjects as $gameObject) {
+                foreach ($this->gameState->gameObjects as $gameObject) {
                     if ($gameObject instanceof Field) {
 
                         if (count($fieldsFound) === 8) {

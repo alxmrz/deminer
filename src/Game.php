@@ -15,16 +15,7 @@ class Game
     private bool $isRunning = true;
     private Renderer $renderer;
     private GameState $state;
-    /**
-     * @var GameObject[]
-     */
-    public array $gameObjects = [];
 
-    private array $modes = [
-        [8, 8],
-        [16, 16],
-        [30, 16],
-    ];
     private ?ClickEvent $clickEvent = null;
 
     public function init(): int
@@ -37,29 +28,7 @@ class Game
         $this->renderer = $this->window->createRenderer();
         $this->state = new GameState();
 
-
-        $color = new SDLColor(30, 30, 30, 0);
-        $mode = $this->modes[0];
-
-        $xCount = $mode[0];
-        $yCount = $mode[1];
-        $minesAvailable = floor(15 * ($xCount * $yCount) / 100);
-
-        //$this->gameObjects[] = new Field(50, 50, 50, 50, $color);
-
-        for ($i = 0; $i < $xCount; $i++) {
-            for ($j = 0; $j < $yCount; $j++) {
-                $field = new Field(25 * $i, 25 * $j, 25, 25, $color);
-                $field->game = $this;
-
-                $this->gameObjects[] = $field;
-            }
-        }
-
-        while ($minesAvailable > 0) {
-            $this->gameObjects[rand(0, count($this->gameObjects)-1)]->isMine = true;
-            $minesAvailable--;
-        }
+        $this->state->init();
 
         $this->clickEvent = null;
 
@@ -72,9 +41,9 @@ class Game
 
         while ($this->isRunning) {
             $this->handleEvents();
-            $this->state->update($this->gameObjects, $this->clickEvent);
+            $this->state->update($this->clickEvent);
 
-            $this->renderer->render($this->gameObjects);
+            $this->renderer->render($this->state->gameObjects);
 
             $this->reset();
 
@@ -89,7 +58,6 @@ class Game
         $windowEvent = $this->sdl->createWindowEvent();
         while ($this->sdl->SDL_PollEvent($windowEvent)) {
             if (SDLEvent::SDL_QUIT === $windowEvent->type) {
-                printf("Pressed quit button\n");
                 $this->isRunning = false;
                 continue;
             }
@@ -98,26 +66,13 @@ class Game
                 if ($windowEvent->button->button === KeyCodes::SDL_BUTTON_LEFT) {
                     $eventClick = new ClickEvent([$windowEvent->button->x, $windowEvent->button->y], true, false);
                     $this->setClickEvent($eventClick);
-
-                    printf(
-                        "Pressed left mouse button on: %d, %d\n",
-                        $windowEvent->button->x,
-                        $windowEvent->button->y
-                    );
                 } elseif ($windowEvent->button->button === KeyCodes::SDL_BUTTON_RIGHT) {
                     $eventClick = new ClickEvent([$windowEvent->button->x, $windowEvent->button->y], false, true);
                     $this->setClickEvent($eventClick);
-
-                    printf(
-                        "Pressed right mouse button on: %d, %d\n",
-                        $windowEvent->button->x,
-                        $windowEvent->button->y
-                    );
                 }
             }
         }
     }
-
 
     private function quit(): void
     {

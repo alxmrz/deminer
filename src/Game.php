@@ -2,6 +2,7 @@
 
 namespace Deminer;
 
+use Closure;
 use Deminer\core\Audio;
 use Deminer\core\ClickEvent;
 use Deminer\core\Collision;
@@ -43,6 +44,7 @@ class Game implements GameInterface
      */
     private bool $isGameOver = false;
     private bool $isGameWon = false;
+    public bool $isFirstFieldOpened = false;
     private Audio $audio;
 
     public function __construct(Audio $audio)
@@ -56,6 +58,7 @@ class Game implements GameInterface
         $this->gameObjects = [];
         $this->isGameStarted = false;
         $this->isGameWon = false;
+        $this->isFirstFieldOpened = false;
         $this->mode = null;
 
         $this->addMenu();
@@ -119,6 +122,11 @@ class Game implements GameInterface
         return array_filter($this->gameObjects, function ($gameObject) {
             return $gameObject instanceof Field;
         });
+    }
+
+    public function findObjectsByFilter(Closure $filter): array
+    {
+        return array_values(array_filter($this->gameObjects, $filter));
     }
 
     public function setGameOver(): void
@@ -198,21 +206,14 @@ class Game implements GameInterface
         $fWidth = $this->modes[$this->mode][2];
         $xCount = $this->modes[$this->mode][0];
         $yCount = $this->modes[$this->mode][1];
-        $minesAvailable = floor(15 * ($xCount * $yCount) / 100);
 
         for ($i = 0; $i < $xCount; $i++) {
             for ($j = 0; $j < $yCount; $j++) {
                 $field = new Field($fWidth * $i, $fWidth * $j, $fWidth, $fWidth, $color);
-                $field->gameState = $this;
+                $field->game = $this;
 
                 $this->gameObjects[] = $field;
             }
-        }
-
-        while ($minesAvailable > 0) {
-            array_values($this->getFields())[rand(0, count($this->getFields()) - 1)]->isMine = true;
-
-            $minesAvailable--;
         }
 
         $this->gameObjects = array_filter($this->gameObjects, function ($object) {

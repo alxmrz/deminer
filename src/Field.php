@@ -20,7 +20,7 @@ class Field extends GameObject
     public bool $isOpen = false;
     public bool $markedAsFlag = false;
     public bool $marksAsUnsure = false;
-    public Game $gameState;
+    public Game $game;
     public int $x;
     public int $y;
 
@@ -28,11 +28,12 @@ class Field extends GameObject
         [0, 0, 0], // 0
         [0, 0, 255], // 1
         [0, 255, 0], // 2
-        [0, 33, 55], // 3
-        [63, 161, 119], // 4
-        [48, 213, 200], // 5
-        [0, 0, 0], // 6
-        [255, 255, 255], // 7
+        [255, 0, 0], // 3
+        [0, 33, 55], // 4
+        [150, 75, 0], // 5
+        [48, 213, 200], // 6
+        [0, 0, 0], // 7
+        [255, 255, 255], // 8
     ];
 
     public function __construct(int $x, int $y, int $width, int $height, SDLColor $color)
@@ -45,6 +46,23 @@ class Field extends GameObject
 
     public function onClick(ClickEvent $event): void
     {
+        if (!$this->game->isFirstFieldOpened) {
+            $xCount = $this->game->modes[$this->game->mode][0];
+            $yCount = $this->game->modes[$this->game->mode][1];
+            $minesAvailable = floor(15 * ($xCount * $yCount) / 100);
+            while ($minesAvailable > 0) {
+                $fields = $this->game->findObjectsByFilter(function ($gameObject) {
+                    return $gameObject instanceof Field && $gameObject->isMine === false && $gameObject !== $this;
+                });
+
+                $fields[rand(0, count($fields) - 1)]->isMine = true;
+
+                $minesAvailable--;
+            }
+
+            $this->game->isFirstFieldOpened = true;
+        }
+
         if ($this->isOpen) {
             return;
         }
@@ -61,7 +79,7 @@ class Field extends GameObject
                         $this->renderType->height
                     )
                 );
-                $this->gameState->setGameOver();
+                $this->game->setGameOver();
 
                 // TODO: it crushes with SegFault here, but works when played in a separate script...
                 //(new Audio())->play(__DIR__ . '/../resources/mine_activation_sound.wav');
@@ -69,7 +87,7 @@ class Field extends GameObject
                 $minesCount = 0;
                 $fieldsFound = [];
 
-                foreach ($this->gameState->getFields() as $gameObject) {
+                foreach ($this->game->getFields() as $gameObject) {
                     if ($gameObject instanceof Field) {
                         if (count($fieldsFound) === 8) {
                             break;
@@ -167,7 +185,7 @@ class Field extends GameObject
 
     private function hasNeighboor(Field $gameObject): bool
     {
-        $fWidth = $this->gameState->modes[$this->gameState->mode][2];
+        $fWidth = $this->game->modes[$this->game->mode][2];
         $isLeftN = $gameObject->x === ($this->x - $fWidth) && $gameObject->y === $this->y;
         $isTopLeftN = $gameObject->x === ($this->x - $fWidth) && $gameObject->y === ($this->y - $fWidth);
         $isTopN = $gameObject->x === $this->x && $gameObject->y === ($this->y - $fWidth);

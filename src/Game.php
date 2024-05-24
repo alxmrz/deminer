@@ -2,6 +2,7 @@
 
 namespace Deminer;
 
+use Deminer\core\Audio;
 use Deminer\core\ClickEvent;
 use Deminer\core\Collision;
 use Deminer\core\GameInterface;
@@ -42,6 +43,12 @@ class Game implements GameInterface
      */
     private bool $isGameOver = false;
     private bool $isGameWon = false;
+    private Audio $audio;
+
+    public function __construct(Audio $audio)
+    {
+        $this->audio = $audio;
+    }
 
     public function init(): void
     {
@@ -98,6 +105,9 @@ class Game implements GameInterface
         }
 
         $this->isGameWon = $this->isGameStarted && $openedFields === ($fieldsCount - $minesCount);
+        if ($this->isGameWon) {
+            $this->audio->play(__DIR__ . '/../resources/victory_sound.mp3');
+        }
     }
     public function draw(Renderer $renderer): void
     {
@@ -113,6 +123,7 @@ class Game implements GameInterface
 
     public function setGameOver(): void
     {
+        $this->audio->play(__DIR__ . '/../resources/mine_activation_sound.wav');
         $this->isGameOver = true;
     }
 

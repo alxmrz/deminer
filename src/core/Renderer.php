@@ -18,11 +18,11 @@ class Renderer
     private array $fonts = [];
     private LibSDL2Image $imager;
 
-    public function __construct(Window $window)
+    public function __construct(Window $window, LibSdl2 $sdl, LibSDL2TTF $ttf, LibSDL2Image $imager)
     {
-        $this->sdl = LibSDL2::load();
-        $this->ttf = LibSDL2TTF::load();
-        $this->imager = LibSDL2Image::load();
+        $this->sdl = $sdl;
+        $this->ttf = $ttf;
+        $this->imager = $imager;
 
         $this->window = $window;
     }

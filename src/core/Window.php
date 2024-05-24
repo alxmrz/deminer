@@ -3,6 +3,9 @@
 namespace Deminer\core;
 
 use SDL2\LibSDL2;
+use SDL2\LibSDL2Image;
+use SDL2\LibSDL2Mixer;
+use SDL2\LibSDL2TTF;
 use SDL2\SDLWindow;
 
 class Window
@@ -77,12 +80,12 @@ class Window
         return $this->window;
     }
 
-    public function createRenderer(): Renderer
+    public function createRenderer(LibSDL2 $sdl2, LibSDL2TTF $ttf, LibSDL2Image $imager): Renderer
     {
         if ($this->rendererCreated) {
             return $this->renderer;
         }
-        $this->renderer = new Renderer($this);
+        $this->renderer = new Renderer($this, $sdl2, $ttf, $imager);
         if (!$this->renderer->init()) {
             $this->close();
         }

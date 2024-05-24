@@ -5,6 +5,9 @@ namespace Deminer\core;
 use Deminer\Game;
 use SDL2\KeyCodes;
 use SDL2\LibSDL2;
+use SDL2\LibSDL2Image;
+use SDL2\LibSDL2Mixer;
+use SDL2\LibSDL2TTF;
 use SDL2\SDLEvent;
 
 class Engine
@@ -22,10 +25,17 @@ class Engine
     private GameInterface $game;
 
     private ?ClickEvent $clickEvent = null;
+    private LibSDL2TTF $ttf;
+    private LibSDL2Image $imager;
+    private LibSDL2Mixer $mixer;
 
     private function init(): void
     {
         $this->sdl = LibSDL2::load();
+        $this->ttf = LibSDL2TTF::load();
+        $this->imager = LibSDL2Image::load();
+        $this->mixer = LibSDL2Mixer::load();
+
         $this->window = new Window(
             "Miner",
             self::WINDOW_START_X,
@@ -36,8 +46,8 @@ class Engine
 
         $this->window->display();
 
-        $this->renderer = $this->window->createRenderer();
-        $this->game = new Game();
+        $this->renderer = $this->window->createRenderer($this->sdl, $this->ttf, $this->imager);
+        $this->game = new Game($this->createAudio());
 
         $this->game->init();
 
@@ -112,5 +122,10 @@ class Engine
     private function reset()
     {
         $this->clickEvent = null;
+    }
+
+    private function createAudio(): Audio
+    {
+        return new Audio();
     }
 }

@@ -4,7 +4,6 @@ namespace Deminer\core;
 
 interface GameInterface
 {
-    public function update();
-    public function draw();
-    public function getWindowSize();
+    public function update(): void;
+    public function draw(Renderer $renderer): void;
 }

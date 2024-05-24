@@ -20,7 +20,7 @@ class Field extends GameObject
     public bool $isOpen = false;
     public bool $markedAsFlag = false;
     public bool $marksAsUnsure = false;
-    public GameState $gameState;
+    public Game $gameState;
     public int $x;
     public int $y;
 

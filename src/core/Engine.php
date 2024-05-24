@@ -2,7 +2,7 @@
 
 namespace Deminer\core;
 
-use Deminer\GameState;
+use Deminer\Game;
 use SDL2\KeyCodes;
 use SDL2\LibSDL2;
 use SDL2\SDLEvent;
@@ -19,11 +19,11 @@ class Engine
 
     private bool $isRunning = true;
     private Renderer $renderer;
-    private GameState $state;
+    private GameInterface $game;
 
     private ?ClickEvent $clickEvent = null;
 
-    public function init(): int
+    private function init(): void
     {
         $this->sdl = LibSDL2::load();
         $this->window = new Window(
@@ -37,13 +37,11 @@ class Engine
         $this->window->display();
 
         $this->renderer = $this->window->createRenderer();
-        $this->state = new GameState();
+        $this->game = new Game();
 
-        $this->state->init();
+        $this->game->init();
 
         $this->clickEvent = null;
-
-        return 1;
     }
 
     public function run(): void
@@ -52,9 +50,9 @@ class Engine
 
         while ($this->isRunning) {
             $this->handleEvents();
-            $this->state->update($this->clickEvent);
+            $this->game->update($this->clickEvent);
 
-            $this->renderer->render($this->state->gameObjects);
+            $this->game->draw($this->renderer);
 
             $this->reset();
 
@@ -85,7 +83,7 @@ class Engine
 
             if (SDLEvent::SDL_KEYDOWN == $windowEvent->type) {
                 if ($windowEvent->key->keysym->sym == KeyCodes::SDLK_SPACE) {
-                    $this->state->restart();
+                    $this->game->restart();
                     printf("Pressed space\n");
                 }
             }

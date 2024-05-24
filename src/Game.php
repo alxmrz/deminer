@@ -4,7 +4,9 @@ namespace Deminer;
 
 use Deminer\core\ClickEvent;
 use Deminer\core\Collision;
+use Deminer\core\GameInterface;
 use Deminer\core\GameObject;
+use Deminer\core\Renderer;
 use Deminer\ui\Button;
 use Deminer\ui\Element;
 use Deminer\ui\Message;
@@ -12,7 +14,7 @@ use Deminer\ui\MessageBox;
 use SDL2\SDLColor;
 use SDL2\SDLRect;
 
-class GameState
+class Game implements GameInterface
 {
     public const int MOD_8_X_8 = 0;
     public const int MOD_16_X_8 = 1;
@@ -96,6 +98,10 @@ class GameState
         }
 
         $this->isGameWon = $this->isGameStarted && $openedFields === ($fieldsCount - $minesCount);
+    }
+    public function draw(Renderer $renderer): void
+    {
+        $renderer->render($this->gameObjects);
     }
 
     public function getFields(): array

@@ -13,6 +13,7 @@ use SDL2\SDLRect;
 
 class Field extends GameObject
 {
+    private const string MINE_SOUND = __DIR__ . '/../resources/mine_activation_sound.wav';
     /**
      * @var true
      */
@@ -35,20 +36,33 @@ class Field extends GameObject
         [0, 0, 0], // 7
         [255, 255, 255], // 8
     ];
+    private int $width;
 
-    public function __construct(int $x, int $y, int $width, int $height, SDLColor $color)
+    public function __construct(SDLRect $rect, SDLColor $color)
     {
-        $this->renderType = new Rectangle($x + 1, $y + 1, $width - 1, $height - 1, $color);
-        $this->collision = new Collision($x + 1, $y + 1, $width - 1, $height - 1);
-        $this->x = $x;
-        $this->y = $y;
+        $this->renderType = new Rectangle(
+            $rect->getX() + 1,
+            $rect->getY() + 1,
+            $rect->getWidth() - 1,
+            $rect->getHeight() - 1,
+            $color
+        );
+        $this->collision = new Collision($rect->getX() + 1,
+            $rect->getY() + 1,
+            $rect->getWidth() - 1,
+            $rect->getHeight() - 1
+        );
+
+        $this->x = $rect->getX();
+        $this->y = $rect->getY();
+        $this->width = $rect->getWidth();
     }
 
     public function onClick(ClickEvent $event): void
     {
-        if (!$this->game->isFirstFieldOpened) {
-            $xCount = $this->game->modes[$this->game->mode][0];
-            $yCount = $this->game->modes[$this->game->mode][1];
+        if (!$this->game->isFirstFieldOpened()) {
+            $xCount = $this->game->getXFieldsCount();
+            $yCount = $this->game->getYFieldsCount();
             $minesAvailable = floor(15 * ($xCount * $yCount) / 100);
             while ($minesAvailable > 0) {
                 $fields = $this->game->findObjectsByFilter(function ($gameObject) {
@@ -60,7 +74,7 @@ class Field extends GameObject
                 $minesAvailable--;
             }
 
-            $this->game->isFirstFieldOpened = true;
+            $this->game->setFirstFieldIsOpen();
         }
 
         if ($this->isOpen) {
@@ -81,8 +95,7 @@ class Field extends GameObject
                 );
                 $this->game->setGameOver();
 
-                $this->game->playAudio(__DIR__ . '/../resources/mine_activation_sound.wav');
-
+                $this->game->playAudio(self::MINE_SOUND);
             } else {
                 $minesCount = 0;
                 $fieldsFound = [];
@@ -93,7 +106,7 @@ class Field extends GameObject
                             break;
                         }
 
-                        if ($this->hasNeighboor($gameObject)) {
+                        if ($this->hasNeighbour($gameObject)) {
                             if ($gameObject->isOpen) {
                                 $fieldsFound[] = $gameObject;
                                 continue;
@@ -183,9 +196,9 @@ class Field extends GameObject
         return $this->markedAsFlag || $this->marksAsUnsure;
     }
 
-    private function hasNeighboor(Field $gameObject): bool
+    private function hasNeighbour(Field $gameObject): bool
     {
-        $fWidth = $this->game->modes[$this->game->mode][2];
+        $fWidth = $this->width;
         $isLeftN = $gameObject->x === ($this->x - $fWidth) && $gameObject->y === $this->y;
         $isTopLeftN = $gameObject->x === ($this->x - $fWidth) && $gameObject->y === ($this->y - $fWidth);
         $isTopN = $gameObject->x === $this->x && $gameObject->y === ($this->y - $fWidth);

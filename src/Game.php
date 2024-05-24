@@ -18,16 +18,17 @@ use SDL2\SDLRect;
 
 class Game implements GameInterface
 {
-    public const int MOD_8_X_8 = 0;
-    public const int MOD_16_X_8 = 1;
-    public const int MOD_30_X_8 = 2;
+    private const int MOD_8_X_8 = 0;
+    private const int MOD_16_X_8 = 1;
+    private const int MOD_30_X_8 = 2;
+    const string VICTORY_SOUND_PATH = __DIR__ . '/../resources/victory_sound.mp3';
 
     /**
      * [fieldsInXRow, fieldsInYRow, fieldWidthAndHeight]
      *
      * @var array[]
      */
-    public array $modes = [
+    private array $modes = [
         [8, 8, 75],
         [16, 16, 37],
         [30, 16, 25],
@@ -36,15 +37,15 @@ class Game implements GameInterface
     /**
      * @var GameObject[]
      */
-    public array $gameObjects = [];
-    public ?int $mode = null;
+    private array $gameObjects = [];
+    private ?int $mode = null;
     private bool $isGameStarted = false;
     /**
      * @var true
      */
     private bool $isGameOver = false;
     private bool $isGameWon = false;
-    public bool $isFirstFieldOpened = false;
+    private bool $isFirstFieldOpened = false;
     private Audio $audio;
 
     public function __construct(Audio $audio)
@@ -109,9 +110,10 @@ class Game implements GameInterface
 
         $this->isGameWon = $this->isGameStarted && $openedFields === ($fieldsCount - $minesCount);
         if ($this->isGameWon) {
-            $this->audio->play(__DIR__ . '/../resources/victory_sound.mp3');
+            $this->audio->play(self::VICTORY_SOUND_PATH);
         }
     }
+
     public function draw(Renderer $renderer): void
     {
         $renderer->render($this->gameObjects);
@@ -119,7 +121,7 @@ class Game implements GameInterface
 
     public function getFields(): array
     {
-        return array_filter($this->gameObjects, function ($gameObject) {
+        return $this->findObjectsByFilter(function ($gameObject) {
             return $gameObject instanceof Field;
         });
     }
@@ -151,7 +153,6 @@ class Game implements GameInterface
             new SDLRect(310, 120, 290, 90),
             new SDLColor(0, 0, 0, 0)
         );
-
 
         $this->gameObjects[] = new MessageBox(
             new SDLRect(395, 230, 110, 90),
@@ -208,23 +209,20 @@ class Game implements GameInterface
 
         for ($i = 0; $i < $xCount; $i++) {
             for ($j = 0; $j < $yCount; $j++) {
-                $field = new Field($fWidth * $i, $fWidth * $j, $fWidth, $fWidth, $color);
+                $field = new Field(new SDLRect($fWidth * $i, $fWidth * $j, $fWidth, $fWidth), $color);
                 $field->game = $this;
 
                 $this->gameObjects[] = $field;
             }
         }
 
-        $this->gameObjects = array_filter($this->gameObjects, function ($object) {
+        $this->gameObjects = $this->findObjectsByFilter(function ($object) {
             return !($object instanceof Element);
         });
 
         $this->isGameStarted = true;
     }
 
-    /**
-     * @return void
-     */
     private function showGameOverMessage(): void
     {
         $this->gameObjects[] = new MessageBox(
@@ -245,9 +243,6 @@ class Game implements GameInterface
         );
     }
 
-    /**
-     * @return bool
-     */
     private function isModeSelected(): bool
     {
         return $this->mode !== null;
@@ -276,5 +271,30 @@ class Game implements GameInterface
     public function playAudio(string $audioPath): void
     {
         $this->audio->play($audioPath);
+    }
+
+    public function isFirstFieldOpened(): bool
+    {
+        return $this->isFirstFieldOpened;
+    }
+
+    public function setFirstFieldIsOpen(): void
+    {
+        $this->isFirstFieldOpened = true;
+    }
+
+    public function getMode(): ?int
+    {
+        return $this->mode;
+    }
+
+    public function getXFieldsCount(): int
+    {
+        return $this->modes[$this->mode][0];
+    }
+
+    public function getYFieldsCount(): int
+    {
+        return $this->modes[$this->mode][1];
     }
 }

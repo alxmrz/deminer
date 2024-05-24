@@ -8,11 +8,11 @@
         }
     ],
     "require": {
-        "alxmrz/php-sdl2": "dev-grinding"
+        "alxmrz/php-sdl2": "dev-main"
     },
     "repositories": [{
-        "type": "path",
-        "url": "/home/alexandr/projects/php/ffi"
+        "type": "vcs",
+        "url": "https://github.com/alxmrz/php-sdl2"
     }],
     "autoload": {
         "psr-4": {

@@ -6,8 +6,10 @@ use Closure;
 use Deminer\core\Audio;
 use Deminer\core\ClickEvent;
 use Deminer\core\Collision;
+use Deminer\core\Event;
 use Deminer\core\GameInterface;
 use Deminer\core\GameObject;
+use Deminer\core\KeyPressedEvent;
 use Deminer\core\Renderer;
 use Deminer\ui\Button;
 use Deminer\ui\Element;
@@ -21,7 +23,7 @@ class Game implements GameInterface
     private const int MOD_8_X_8 = 0;
     private const int MOD_16_X_8 = 1;
     private const int MOD_30_X_8 = 2;
-    const string VICTORY_SOUND_PATH = __DIR__ . '/../resources/victory_sound.mp3';
+    private const string VICTORY_SOUND_PATH = __DIR__ . '/../resources/victory_sound.mp3';
 
     /**
      * [fieldsInXRow, fieldsInYRow, fieldWidthAndHeight]
@@ -65,11 +67,7 @@ class Game implements GameInterface
         $this->addMenu();
     }
 
-    /**
-     * @param ClickEvent|null $clickEvent
-     * @return void
-     */
-    public function update(?ClickEvent $clickEvent = null): void
+    public function update(Event $event = null): void
     {
         if ($this->isGameWon) {
             $this->showGameWinMessage();
@@ -87,8 +85,8 @@ class Game implements GameInterface
             $this->startGame();
         }
 
-        $mouseCollision = !is_null($clickEvent)
-            ? new Collision($clickEvent->coords[0], $clickEvent->coords[1], 1, 1)
+        $mouseCollision = $event instanceof ClickEvent
+            ? new Collision($event->coords[0], $event->coords[1], 1, 1)
             : null;
 
         $fieldsCount = 0;
@@ -98,7 +96,7 @@ class Game implements GameInterface
         foreach ($this->gameObjects as $gameObject) {
             if ($mouseCollision && $gameObject->isCollidable()
                 && $gameObject->getCollision()->isCollidedWith($mouseCollision)) {
-                $gameObject->onClick($clickEvent);
+                $gameObject->onClick($event);
             }
 
             if ($gameObject instanceof Field) {

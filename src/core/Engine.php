@@ -24,7 +24,7 @@ class Engine
     private Renderer $renderer;
     private GameInterface $game;
 
-    private ?ClickEvent $clickEvent = null;
+    private ?Event $event = null;
     private LibSDL2TTF $ttf;
     private LibSDL2Image $imager;
     private LibSDL2Mixer $mixer;
@@ -51,7 +51,7 @@ class Engine
 
         $this->game->init();
 
-        $this->clickEvent = null;
+        $this->event = null;
     }
 
     public function run(): void
@@ -60,7 +60,7 @@ class Engine
 
         while ($this->isRunning) {
             $this->handleEvents();
-            $this->game->update($this->clickEvent);
+            $this->game->update($this->event);
 
             $this->game->draw($this->renderer);
 
@@ -83,18 +83,29 @@ class Engine
 
             if (SDLEvent::SDL_MOUSEBUTTONDOWN === $windowEvent->type) {
                 if ($windowEvent->button->button === KeyCodes::SDL_BUTTON_LEFT) {
-                    $eventClick = new ClickEvent([$windowEvent->button->x, $windowEvent->button->y], true, false);
-                    $this->setClickEvent($eventClick);
+                    $this->setEvent(
+                        new ClickEvent(
+                            [$windowEvent->button->x, $windowEvent->button->y],
+                            true,
+                            false
+                        )
+                    );
                 } elseif ($windowEvent->button->button === KeyCodes::SDL_BUTTON_RIGHT) {
-                    $eventClick = new ClickEvent([$windowEvent->button->x, $windowEvent->button->y], false, true);
-                    $this->setClickEvent($eventClick);
+                    $this->setEvent(
+                        new ClickEvent(
+                            [$windowEvent->button->x, $windowEvent->button->y],
+                            false,
+                            true
+                        )
+                    );
                 }
             }
 
-            if (SDLEvent::SDL_KEYDOWN == $windowEvent->type) {
+            if (SDLEvent::SDL_KEYDOWN === $windowEvent->type) {
                 if ($windowEvent->key->keysym->sym == KeyCodes::SDLK_SPACE) {
-                    $this->game->restart();
-                    printf("Pressed space\n");
+                     $this->game->restart();
+                     // TODO: this line causes segfault somehow, need to fix
+                     //$this->setEvent(new KeyPressedEvent(KeyCodes::SDLK_SPACE));
                 }
             }
         }
@@ -114,14 +125,14 @@ class Engine
         $this->sdl->SDL_Delay($ms);
     }
 
-    private function setClickEvent(ClickEvent $event)
+    private function setEvent(Event $event): void
     {
-        $this->clickEvent = $event;
+        $this->event = $event;
     }
 
-    private function reset()
+    private function reset(): void
     {
-        $this->clickEvent = null;
+        $this->event = null;
     }
 
     private function createAudio(): Audio

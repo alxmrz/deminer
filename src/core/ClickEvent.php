@@ -2,7 +2,8 @@
 
 namespace Deminer\core;
 
-class ClickEvent
+
+class ClickEvent extends Event
 {
     public bool $isLeftClick = false;
     public bool $isRightClick = false;

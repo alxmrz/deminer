@@ -3,9 +3,9 @@
 namespace Deminer\ui;
 
 use Closure;
-use Deminer\ClickEvent;
-use Deminer\Collision;
-use Deminer\Text;
+use Deminer\core\ClickEvent;
+use Deminer\core\Collision;
+use Deminer\core\Text;
 use SDL2\SDLColor;
 use SDL2\SDLRect;
 

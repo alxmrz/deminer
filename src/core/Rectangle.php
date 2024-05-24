@@ -1,9 +1,8 @@
 <?php
 
-namespace Deminer;
+namespace Deminer\core;
 
 use SDL2\SDLColor;
-use SDL2\SDLRect;
 
 class Rectangle extends RenderType
 {

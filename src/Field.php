@@ -2,6 +2,12 @@
 
 namespace Deminer;
 
+use Deminer\core\ClickEvent;
+use Deminer\core\Collision;
+use Deminer\core\GameObject;
+use Deminer\core\Image;
+use Deminer\core\Rectangle;
+use Deminer\core\Text;
 use SDL2\SDLColor;
 use SDL2\SDLRect;
 

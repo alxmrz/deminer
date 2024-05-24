@@ -1,6 +1,6 @@
 <?php
 
-namespace Deminer;
+namespace Deminer\core;
 
 use SDL2\LibSDL2;
 use SDL2\LibSDL2Image;
@@ -86,7 +86,7 @@ class Renderer
     {
         $this->sdl->SDL_SetRenderDrawColor($this->renderer, 160, 160, 160, 0);
 
-        $mainRect = new SDLRect(0, 0, Game::WINDOW_WIDTH, Game::WINDOW_HEIGHT);
+        $mainRect = new SDLRect(0, 0, Engine::WINDOW_WIDTH, Engine::WINDOW_HEIGHT);
 
 
         if ($this->sdl->SDL_RenderFillRect($this->renderer, $mainRect) < 0) {
@@ -109,7 +109,7 @@ class Renderer
 
     public function displayText(int $x, int $y, int $width, int $height, SDLColor $color, string $text, int $size = 24): void
     {
-        $sans = $this->getFont(__DIR__ . '/../resources/Sans.ttf', $size);
+        $sans = $this->getFont(__DIR__ . '/../../resources/Sans.ttf', $size);
 
         $surfaceMessage = $this->ttf->TTF_RenderText_Solid($sans, $text, $color);
         if ($surfaceMessage === null) {

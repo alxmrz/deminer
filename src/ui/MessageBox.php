@@ -2,7 +2,6 @@
 
 namespace Deminer\ui;
 
-use Deminer\GameObject;
 use SDL2\SDLColor;
 use SDL2\SDLRect;
 

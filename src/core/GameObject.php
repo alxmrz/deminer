@@ -1,6 +1,6 @@
 <?php
 
-namespace Deminer;
+namespace Deminer\core;
 
 class GameObject
 {

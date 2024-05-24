@@ -2,7 +2,7 @@
 
 namespace Deminer\ui;
 
-use Deminer\GameObject;
+use Deminer\core\GameObject;
 
 class Element extends GameObject
 {

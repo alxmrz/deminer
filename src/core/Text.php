@@ -1,8 +1,7 @@
 <?php
 
-namespace Deminer;
+namespace Deminer\core;
 
-use Deminer\RenderType;
 use SDL2\SDLColor;
 
 class Text extends RenderType

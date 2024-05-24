@@ -1,6 +1,6 @@
 <?php
 
-namespace Deminer;
+namespace Deminer\core;
 
 use SDL2\LibSDL2;
 use SDL2\LibSDL2Mixer;

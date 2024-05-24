@@ -2,6 +2,9 @@
 
 namespace Deminer;
 
+use Deminer\core\ClickEvent;
+use Deminer\core\Collision;
+use Deminer\core\GameObject;
 use Deminer\ui\Button;
 use Deminer\ui\Element;
 use Deminer\ui\Message;
@@ -102,11 +105,6 @@ class GameState
         });
     }
 
-    public function setMode(int $mode): void
-    {
-        $this->mode = $mode;
-    }
-
     public function setGameOver(): void
     {
         $this->isGameOver = true;
@@ -177,7 +175,7 @@ class GameState
     /**
      * @return void
      */
-    public function startGame(): void
+    private function startGame(): void
     {
         $color = new SDLColor(30, 30, 30, 0);
         $fWidth = $this->modes[$this->mode][2];
@@ -210,7 +208,7 @@ class GameState
     /**
      * @return void
      */
-    public function showGameOverMessage(): void
+    private function showGameOverMessage(): void
     {
         $this->gameObjects[] = new MessageBox(
             new SDLRect(95, 130, 310, 180),
@@ -233,7 +231,7 @@ class GameState
     /**
      * @return bool
      */
-    public function isModeSelected(): bool
+    private function isModeSelected(): bool
     {
         return $this->mode !== null;
     }

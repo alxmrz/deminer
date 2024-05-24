@@ -1,12 +1,13 @@
 <?php
 
-namespace Deminer;
+namespace Deminer\core;
 
+use Deminer\GameState;
 use SDL2\KeyCodes;
 use SDL2\LibSDL2;
 use SDL2\SDLEvent;
 
-class Game
+class Engine
 {
     private const int WINDOW_START_X = 200;
     private const int WINDOW_START_Y = 200;

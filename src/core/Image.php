@@ -1,6 +1,6 @@
 <?php
 
-namespace Deminer;
+namespace Deminer\core;
 
 use SDL2\SDLRect;
 

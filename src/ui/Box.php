@@ -2,8 +2,8 @@
 
 namespace Deminer\ui;
 
-use Deminer\Renderer;
-use Deminer\RenderType;
+use Deminer\core\Renderer;
+use Deminer\core\RenderType;
 use SDL2\SDLColor;
 use SDL2\SDLRect;
 

@@ -1,8 +1,6 @@
 <?php
 
-namespace Deminer;
-
-use SDL2\SDLColor;
+namespace Deminer\core;
 
 class RenderType
 {

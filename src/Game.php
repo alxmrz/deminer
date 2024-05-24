@@ -131,7 +131,6 @@ class Game implements GameInterface
 
     public function setGameOver(): void
     {
-        $this->audio->play(__DIR__ . '/../resources/mine_activation_sound.wav');
         $this->isGameOver = true;
     }
 
@@ -272,5 +271,10 @@ class Game implements GameInterface
             new SDLRect(195, 210, 510, 90),
             new SDLColor(0, 0, 0, 0)
         );
+    }
+
+    public function playAudio(string $audioPath): void
+    {
+        $this->audio->play($audioPath);
     }
 }

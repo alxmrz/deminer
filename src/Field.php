@@ -81,8 +81,8 @@ class Field extends GameObject
                 );
                 $this->game->setGameOver();
 
-                // TODO: it crushes with SegFault here, but works when played in a separate script...
-                //(new Audio())->play(__DIR__ . '/../resources/mine_activation_sound.wav');
+                $this->game->playAudio(__DIR__ . '/../resources/mine_activation_sound.wav');
+
             } else {
                 $minesCount = 0;
                 $fieldsFound = [];

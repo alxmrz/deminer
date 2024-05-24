@@ -37,7 +37,7 @@ class Engine
         $this->mixer = LibSDL2Mixer::load();
 
         $this->window = new Window(
-            "Miner",
+            "Deminer",
             self::WINDOW_START_X,
             self::WINDOW_START_Y,
             self::WINDOW_WIDTH,

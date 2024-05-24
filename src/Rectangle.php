@@ -1,6 +1,6 @@
 <?php
 
-namespace Sapper;
+namespace Deminer;
 
 use SDL2\SDLColor;
 use SDL2\SDLRect;

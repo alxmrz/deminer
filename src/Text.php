@@ -1,8 +1,8 @@
 <?php
 
-namespace Sapper;
+namespace Deminer;
 
-use Sapper\RenderType;
+use Deminer\RenderType;
 use SDL2\SDLColor;
 
 class Text extends RenderType

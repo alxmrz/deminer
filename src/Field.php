@@ -1,6 +1,6 @@
 <?php
 
-namespace Sapper;
+namespace Deminer;
 
 use SDL2\SDLColor;
 use SDL2\SDLRect;
@@ -32,7 +32,7 @@ class Field extends GameObject
     public function __construct(int $x, int $y, int $width, int $height, SDLColor $color)
     {
         $this->renderType = new Rectangle($x + 1, $y + 1, $width - 1, $height - 1, $color);
-        $this->collision = new Collision($x, $y, $width, $height);
+        $this->collision = new Collision($x + 1, $y + 1, $width - 1, $height - 1);
         $this->x = $x;
         $this->y = $y;
     }
@@ -56,6 +56,9 @@ class Field extends GameObject
                     )
                 );
                 $this->gameState->setGameOver();
+
+                // TODO: it crushes with SegFault here, but works when played in a separate script...
+                //(new Audio())->play(__DIR__ . '/../resources/mine_activation_sound.wav');
             } else {
                 $minesCount = 0;
                 $fieldsFound = [];

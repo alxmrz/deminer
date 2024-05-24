@@ -16,7 +16,7 @@
     }],
     "autoload": {
         "psr-4": {
-            "Sapper\\": "src/"
+            "Deminer\\": "src/"
         }
     },
     "require-dev": {

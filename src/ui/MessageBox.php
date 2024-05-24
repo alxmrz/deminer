@@ -1,8 +1,8 @@
 <?php
 
-namespace Sapper\ui;
+namespace Deminer\ui;
 
-use Sapper\GameObject;
+use Deminer\GameObject;
 use SDL2\SDLColor;
 use SDL2\SDLRect;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Sapper;
+namespace Deminer;
 
 use SDL2\LibSDL2;
 use SDL2\SDLWindow;

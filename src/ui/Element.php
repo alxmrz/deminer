@@ -1,8 +1,8 @@
 <?php
 
-namespace Sapper\ui;
+namespace Deminer\ui;
 
-use Sapper\GameObject;
+use Deminer\GameObject;
 
 class Element extends GameObject
 {

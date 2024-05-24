@@ -1,9 +1,9 @@
 <?php
 
-namespace Sapper\ui;
+namespace Deminer\ui;
 
-use Sapper\Renderer;
-use Sapper\RenderType;
+use Deminer\Renderer;
+use Deminer\RenderType;
 use SDL2\SDLColor;
 use SDL2\SDLRect;
 

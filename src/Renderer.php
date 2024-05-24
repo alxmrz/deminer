@@ -1,6 +1,6 @@
 <?php
 
-namespace Sapper;
+namespace Deminer;
 
 use SDL2\LibSDL2;
 use SDL2\LibSDL2Image;
@@ -86,7 +86,7 @@ class Renderer
     {
         $this->sdl->SDL_SetRenderDrawColor($this->renderer, 160, 160, 160, 0);
 
-        $mainRect = new SDLRect(0, 0, 900, 600);
+        $mainRect = new SDLRect(0, 0, Game::WINDOW_WIDTH, Game::WINDOW_HEIGHT);
 
 
         if ($this->sdl->SDL_RenderFillRect($this->renderer, $mainRect) < 0) {

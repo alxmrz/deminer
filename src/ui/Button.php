@@ -1,11 +1,11 @@
 <?php
 
-namespace Sapper\ui;
+namespace Deminer\ui;
 
 use Closure;
-use Sapper\ClickEvent;
-use Sapper\Collision;
-use Sapper\Text;
+use Deminer\ClickEvent;
+use Deminer\Collision;
+use Deminer\Text;
 use SDL2\SDLColor;
 use SDL2\SDLRect;
 

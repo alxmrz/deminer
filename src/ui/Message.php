@@ -1,9 +1,9 @@
 <?php
 
-namespace Sapper\ui;
+namespace Deminer\ui;
 
-use Sapper\GameObject;
-use Sapper\Text;
+use Deminer\GameObject;
+use Deminer\Text;
 use SDL2\SDLColor;
 use SDL2\SDLRect;
 
@@ -17,7 +17,8 @@ class Message extends Element
             $rect->getWidth(),
             $rect->getHeight(),
             $color,
-            $message
+            $message,
+            50
         );
     }
 }

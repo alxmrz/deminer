@@ -1,6 +1,6 @@
 <?php
 
-namespace Sapper;
+namespace Deminer;
 
 class Collision
 {

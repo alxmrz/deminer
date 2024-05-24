@@ -1,6 +1,6 @@
 <?php
 
-namespace Sapper;
+namespace Deminer;
 
 use SDL2\KeyCodes;
 use SDL2\LibSDL2;
@@ -10,8 +10,8 @@ class Game
 {
     private const int WINDOW_START_X = 200;
     private const int WINDOW_START_Y = 200;
-    private const int WINDOW_WIDTH = 900;
-    private const int WINDOW_HEIGHT = 600;
+    public const int WINDOW_WIDTH = 900;
+    public const int WINDOW_HEIGHT = 600;
 
     private LibSDL2 $sdl;
     private Window $window;

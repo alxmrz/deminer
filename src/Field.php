@@ -16,6 +16,7 @@ class Field extends GameObject
     private const string MINE_SOUND = __DIR__ . '/../resources/mine_activation_sound.wav';
     private const string IS_FLAG_IMAGE_PATH = __DIR__ . '/../resources/isFlag.png';
     private const string FLAG_IMAGE_PATH = __DIR__ . '/../resources/flag.png';
+    private const string MINE_IMAGE_PATH = __DIR__ . '/../resources/mine.png';
     /**
      * @var true
      */
@@ -28,7 +29,6 @@ class Field extends GameObject
     public int $y;
 
     public array $textColors = [
-        [0, 0, 0], // 0
         [0, 0, 255], // 1
         [0, 255, 0], // 2
         [255, 0, 0], // 3
@@ -118,7 +118,7 @@ class Field extends GameObject
         $this->isOpen = true;
         if ($this->isMine) {
             $this->renderType = new Image(
-                __DIR__ . '/../resources/mine.png',
+                self::MINE_IMAGE_PATH,
                 new SDLRect(
                     $this->renderType->x,
                     $this->renderType->y,
@@ -174,9 +174,9 @@ class Field extends GameObject
                     $this->renderType->width,
                     $this->renderType->height,
                     new SDLColor(
-                        $this->textColors[$minesCount][0],
-                        $this->textColors[$minesCount][1],
-                        $this->textColors[$minesCount][2],
+                        $this->textColors[$minesCount - 1][0],
+                        $this->textColors[$minesCount - 1][1],
+                        $this->textColors[$minesCount - 1][2],
                         0
                     ),
                     "$minesCount"

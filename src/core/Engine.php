@@ -103,9 +103,7 @@ class Engine
 
             if (SDLEvent::SDL_KEYDOWN === $windowEvent->type) {
                 if ($windowEvent->key->keysym->sym == KeyCodes::SDLK_SPACE) {
-                     $this->game->restart();
-                     // TODO: this line causes segfault somehow, need to fix
-                     //$this->setEvent(new KeyPressedEvent(KeyCodes::SDLK_SPACE));
+                     $this->setEvent(new KeyPressedEvent(KeyCodes::SDLK_SPACE));
                 }
             }
         }

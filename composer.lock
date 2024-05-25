@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/alxmrz/php-sdl2.git",
-                "reference": "53279dc600c60c9b62530178fd2631ddff9b405a"
+                "reference": "04897e8e5b55ad2a9e395b73f264137533511fc2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/alxmrz/php-sdl2/zipball/53279dc600c60c9b62530178fd2631ddff9b405a",
-                "reference": "53279dc600c60c9b62530178fd2631ddff9b405a",
+                "url": "https://api.github.com/repos/alxmrz/php-sdl2/zipball/04897e8e5b55ad2a9e395b73f264137533511fc2",
+                "reference": "04897e8e5b55ad2a9e395b73f264137533511fc2",
                 "shasum": ""
             },
             "require-dev": {
@@ -44,7 +44,7 @@
                 "source": "https://github.com/alxmrz/php-sdl2/tree/main",
                 "issues": "https://github.com/alxmrz/php-sdl2/issues"
             },
-            "time": "2024-05-24T17:18:22+00:00"
+            "time": "2024-05-25T09:53:27+00:00"
         }
     ],
     "packages-dev": [],

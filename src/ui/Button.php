@@ -13,7 +13,7 @@ class Button extends Element
 {
     private Closure $onClickCallBack;
 
-    public function __construct(string $message, SDLRect $rect, SDLColor $color, int $size = 24, Closure $onClick)
+    public function __construct(string $message, SDLRect $rect, SDLColor $color, int $size, Closure $onClick)
     {
         $this->collision = new Collision(
             $rect->getX(),

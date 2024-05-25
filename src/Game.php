@@ -69,6 +69,11 @@ class Game implements GameInterface
 
     public function update(Event $event = null): void
     {
+        if ($event instanceof KeyPressedEvent && $event->isSpacePressed()) {
+            $this->restart();
+            return;
+        }
+
         if ($this->isGameWon) {
             $this->showGameWinMessage();
 

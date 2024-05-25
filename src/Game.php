@@ -48,12 +48,7 @@ class Game implements GameInterface
     private bool $isGameOver = false;
     private bool $isGameWon = false;
     private bool $isFirstFieldOpened = false;
-    private Audio $audio;
-
-    public function __construct(Audio $audio)
-    {
-        $this->audio = $audio;
-    }
+    private ?Audio $audio = null;
 
     public function init(): void
     {
@@ -299,5 +294,10 @@ class Game implements GameInterface
     public function getYFieldsCount(): int
     {
         return $this->modes[$this->mode][1];
+    }
+
+    public function setAudio(Audio $audio): void
+    {
+        $this->audio = $audio;
     }
 }

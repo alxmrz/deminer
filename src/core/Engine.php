@@ -47,15 +47,19 @@ class Engine
         $this->window->display();
 
         $this->renderer = $this->window->createRenderer($this->sdl, $this->ttf, $this->imager);
-        $this->game = new Game($this->createAudio());
+    }
+
+    public function run(GameInterface $game): void
+    {
+        $this->game = $game;
+
+        // TODO: in future it will be replaced with component injection
+        if ($this->game instanceof Game) {
+            $this->game->setAudio($this->createAudio());
+        }
 
         $this->game->init();
 
-        $this->event = null;
-    }
-
-    public function run(): void
-    {
         $this->init();
 
         while ($this->isRunning) {

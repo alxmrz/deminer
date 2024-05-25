@@ -1,9 +1,8 @@
 <?php
 
 use Deminer\core\Engine;
+use Deminer\Game;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$game = new Engine();
-
-$game->run();
+(new Engine())->run(new Game());

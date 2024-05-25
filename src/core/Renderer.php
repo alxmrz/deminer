@@ -86,8 +86,7 @@ class Renderer
     {
         $this->sdl->SDL_SetRenderDrawColor($this->renderer, 160, 160, 160, 0);
 
-        $mainRect = new SDLRect(0, 0, Engine::WINDOW_WIDTH, Engine::WINDOW_HEIGHT);
-
+        $mainRect = new SDLRect(0, 0, $this->window->getWidth(), $this->window->getHeight());
 
         if ($this->sdl->SDL_RenderFillRect($this->renderer, $mainRect) < 0) {
             echo "ERROR ON INIT: " . $this->sdl->SDL_GetError();

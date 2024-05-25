@@ -93,4 +93,14 @@ class Window
 
         return $this->renderer;
     }
+
+    public function getWidth(): int
+    {
+        return $this->width;
+    }
+
+    public function getHeight(): int
+    {
+        return $this->height;
+    }
 }

@@ -12,10 +12,11 @@ use SDL2\SDLEvent;
 
 class Engine
 {
-    private const int WINDOW_START_X = 200;
-    private const int WINDOW_START_Y = 200;
-    public const int WINDOW_WIDTH = 900;
-    public const int WINDOW_HEIGHT = 600;
+    private string $windowTitle = 'Game app';
+    private int $windowStartX = 50;
+    private int $windowStartY = 50;
+    private int $windowWidth = 100;
+    private int $windowHeight = 100;
 
     private LibSDL2 $sdl;
     private Window $window;
@@ -37,11 +38,11 @@ class Engine
         $this->mixer = LibSDL2Mixer::load();
 
         $this->window = new Window(
-            "Deminer",
-            self::WINDOW_START_X,
-            self::WINDOW_START_Y,
-            self::WINDOW_WIDTH,
-            self::WINDOW_HEIGHT
+            $this->getWindowTitle(),
+            $this->getWindowStartX(),
+            $this->getWindowStartY(),
+            $this->getWindowWidth(),
+            $this->getWindowHeight()
         );
 
         $this->window->display();
@@ -140,5 +141,55 @@ class Engine
     private function createAudio(): Audio
     {
         return new Audio();
+    }
+
+    public function getWindowStartX(): int
+    {
+        return $this->windowStartX;
+    }
+
+    public function setWindowStartX(int $windowStartX): void
+    {
+        $this->windowStartX = $windowStartX;
+    }
+
+    public function getWindowStartY(): int
+    {
+        return $this->windowStartY;
+    }
+
+    public function setWindowStartY(int $windowStartY): void
+    {
+        $this->windowStartY = $windowStartY;
+    }
+
+    public function getWindowWidth(): int
+    {
+        return $this->windowWidth;
+    }
+
+    public function setWindowWidth(int $windowWidth): void
+    {
+        $this->windowWidth = $windowWidth;
+    }
+
+    public function getWindowHeight(): int
+    {
+        return $this->windowHeight;
+    }
+
+    public function setWindowHeight(int $windowHeight): void
+    {
+        $this->windowHeight = $windowHeight;
+    }
+
+    public function getWindowTitle(): string
+    {
+        return $this->windowTitle;
+    }
+
+    public function setWindowTitle(string $windowTitle): void
+    {
+        $this->windowTitle = $windowTitle;
     }
 }

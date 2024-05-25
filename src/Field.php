@@ -14,6 +14,8 @@ use SDL2\SDLRect;
 class Field extends GameObject
 {
     private const string MINE_SOUND = __DIR__ . '/../resources/mine_activation_sound.wav';
+    private const string IS_FLAG_IMAGE_PATH = __DIR__ . '/../resources/isFlag.png';
+    private const string FLAG_IMAGE_PATH = __DIR__ . '/../resources/flag.png';
     /**
      * @var true
      */
@@ -47,7 +49,8 @@ class Field extends GameObject
             $rect->getHeight() - 1,
             $color
         );
-        $this->collision = new Collision($rect->getX() + 1,
+        $this->collision = new Collision(
+            $rect->getX() + 1,
             $rect->getY() + 1,
             $rect->getWidth() - 1,
             $rect->getHeight() - 1
@@ -61,20 +64,7 @@ class Field extends GameObject
     public function onClick(ClickEvent $event): void
     {
         if (!$this->game->isFirstFieldOpened()) {
-            $xCount = $this->game->getXFieldsCount();
-            $yCount = $this->game->getYFieldsCount();
-            $minesAvailable = floor(15 * ($xCount * $yCount) / 100);
-            while ($minesAvailable > 0) {
-                $fields = $this->game->findObjectsByFilter(function ($gameObject) {
-                    return $gameObject instanceof Field && $gameObject->isMine === false && $gameObject !== $this;
-                });
-
-                $fields[rand(0, count($fields) - 1)]->isMine = true;
-
-                $minesAvailable--;
-            }
-
-            $this->game->setFirstFieldIsOpen();
+            $this->game->initMines($this);
         }
 
         if ($this->isOpen) {
@@ -82,112 +72,13 @@ class Field extends GameObject
         }
 
         if ($event->isLeftClick && !$this->isMarked()) {
-            $this->isOpen = true;
-            if ($this->isMine) {
-                $this->renderType = new Image(
-                    __DIR__ . '/../resources/mine.png',
-                    new SDLRect(
-                        $this->renderType->x,
-                        $this->renderType->y,
-                        $this->renderType->width,
-                        $this->renderType->height
-                    )
-                );
-                $this->game->setGameOver();
-
-                $this->game->playAudio(self::MINE_SOUND);
-            } else {
-                $minesCount = 0;
-                $fieldsFound = [];
-
-                foreach ($this->game->getFields() as $gameObject) {
-                    if ($gameObject instanceof Field) {
-                        if (count($fieldsFound) === 8) {
-                            break;
-                        }
-
-                        if ($this->hasNeighbour($gameObject)) {
-                            if ($gameObject->isOpen) {
-                                $fieldsFound[] = $gameObject;
-                                continue;
-                            }
-
-                            if ($gameObject->isMine) {
-                                $minesCount++;
-                            }
-
-                            $fieldsFound[] = $gameObject;
-                        }
-                    }
-                }
-
-                if ($minesCount === 0) {
-                    foreach ($fieldsFound as $field) {
-                        $field->onClick($event);
-                    }
-                }
-
-                if ($minesCount === 0) {
-                    $this->renderType = new Rectangle(
-                        $this->renderType->x,
-                        $this->renderType->y,
-                        $this->renderType->width,
-                        $this->renderType->height, new SDLColor(255, 255, 255, 0)
-                    );
-                } else {
-                    $this->renderType = new Text(
-                        $this->renderType->x,
-                        $this->renderType->y,
-                        $this->renderType->width,
-                        $this->renderType->height,
-                        new SDLColor(
-                            $this->textColors[$minesCount][0],
-                            $this->textColors[$minesCount][1],
-                            $this->textColors[$minesCount][2],
-                            0
-                        ),
-                        "$minesCount"
-                    );
-                }
-            }
+            $this->handleLeftClick($event);
 
             return;
         }
 
         if ($event->isRightClick) {
-            if (!$this->isMarked()) {
-                $this->renderType = new Image(
-                    __DIR__ . '/../resources/flag.png',
-                    new SDLRect(
-                        $this->renderType->x,
-                        $this->renderType->y,
-                        $this->renderType->width,
-                        $this->renderType->height
-                    )
-                );
-                $this->markedAsFlag = true;
-            } elseif ($this->markedAsFlag) {
-                $this->renderType = new Image(
-                    __DIR__ . '/../resources/isFlag.png',
-                    new SDLRect(
-                        $this->renderType->x,
-                        $this->renderType->y,
-                        $this->renderType->width,
-                        $this->renderType->height
-                    )
-                );
-                $this->markedAsFlag = false;
-                $this->marksAsUnsure = true;
-            } else {
-                $this->renderType = new Rectangle(
-                    $this->renderType->x,
-                    $this->renderType->y,
-                    $this->renderType->width,
-                    $this->renderType->height, new SDLColor(30, 30, 30, 0)
-                );
-                $this->markedAsFlag = false;
-                $this->marksAsUnsure = false;
-            }
+            $this->handleRightClick();
         }
     }
 
@@ -216,5 +107,121 @@ class Field extends GameObject
             || $isRightBottomN
             || $isBottomN
             || $isLeftBottomN;
+    }
+
+    /**
+     * @param ClickEvent $event
+     * @return void
+     */
+    public function handleLeftClick(ClickEvent $event): void
+    {
+        $this->isOpen = true;
+        if ($this->isMine) {
+            $this->renderType = new Image(
+                __DIR__ . '/../resources/mine.png',
+                new SDLRect(
+                    $this->renderType->x,
+                    $this->renderType->y,
+                    $this->renderType->width,
+                    $this->renderType->height
+                )
+            );
+            $this->game->setGameOver();
+
+            $this->game->playAudio(self::MINE_SOUND);
+        } else {
+            $minesCount = 0;
+            $fieldsFound = [];
+
+            foreach ($this->game->getFields() as $gameObject) {
+                if ($gameObject instanceof Field) {
+                    if (count($fieldsFound) === 8) {
+                        break;
+                    }
+
+                    if ($this->hasNeighbour($gameObject)) {
+                        if ($gameObject->isOpen) {
+                            $fieldsFound[] = $gameObject;
+                            continue;
+                        }
+
+                        if ($gameObject->isMine) {
+                            $minesCount++;
+                        }
+
+                        $fieldsFound[] = $gameObject;
+                    }
+                }
+            }
+
+            if ($minesCount === 0) {
+                foreach ($fieldsFound as $field) {
+                    $field->onClick($event);
+                }
+            }
+
+            if ($minesCount === 0) {
+                $this->renderType = new Rectangle(
+                    $this->renderType->x,
+                    $this->renderType->y,
+                    $this->renderType->width,
+                    $this->renderType->height, new SDLColor(255, 255, 255, 0)
+                );
+            } else {
+                $this->renderType = new Text(
+                    $this->renderType->x,
+                    $this->renderType->y,
+                    $this->renderType->width,
+                    $this->renderType->height,
+                    new SDLColor(
+                        $this->textColors[$minesCount][0],
+                        $this->textColors[$minesCount][1],
+                        $this->textColors[$minesCount][2],
+                        0
+                    ),
+                    "$minesCount"
+                );
+            }
+        }
+    }
+
+    /**
+     * @return void
+     */
+    public function handleRightClick(): void
+    {
+        if (!$this->isMarked()) {
+            $this->renderType = new Image(
+                self::FLAG_IMAGE_PATH,
+                new SDLRect(
+                    $this->renderType->x,
+                    $this->renderType->y,
+                    $this->renderType->width,
+                    $this->renderType->height
+                )
+            );
+            $this->markedAsFlag = true;
+        } elseif ($this->markedAsFlag) {
+            $this->renderType = new Image(
+                self::IS_FLAG_IMAGE_PATH,
+                new SDLRect(
+                    $this->renderType->x,
+                    $this->renderType->y,
+                    $this->renderType->width,
+                    $this->renderType->height
+                )
+            );
+            $this->markedAsFlag = false;
+            $this->marksAsUnsure = true;
+        } else {
+            $this->renderType = new Rectangle(
+                $this->renderType->x,
+                $this->renderType->y,
+                $this->renderType->width,
+                $this->renderType->height, new SDLColor(30, 30, 30, 0)
+            );
+            $this->markedAsFlag = false;
+            $this->marksAsUnsure = false;
+        }
     }
 }

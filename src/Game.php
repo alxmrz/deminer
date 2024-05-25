@@ -300,4 +300,22 @@ class Game implements GameInterface
     {
         $this->audio = $audio;
     }
+
+    public function initMines(Field $firstOpenedField): void
+    {
+        $xCount = $this->getXFieldsCount();
+        $yCount = $this->getYFieldsCount();
+        $minesAvailable = floor(15 * ($xCount * $yCount) / 100);
+        while ($minesAvailable > 0) {
+            $fields = $this->findObjectsByFilter(function ($gameObject) use ($firstOpenedField) {
+                return $gameObject instanceof Field && $gameObject->isMine === false && $gameObject !== $firstOpenedField;
+            });
+
+            $fields[rand(0, count($fields) - 1)]->isMine = true;
+
+            $minesAvailable--;
+        }
+
+        $this->setFirstFieldIsOpen();
+    }
 }

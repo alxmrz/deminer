@@ -59,9 +59,10 @@ class Engine
             $this->game->setAudio($this->createAudio());
         }
 
+        $this->init();
+
         $this->game->init();
 
-        $this->init();
 
         while ($this->isRunning) {
             $this->handleEvents();

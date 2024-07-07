@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "acce565235ba8b564e3cd170d664b4b3",
+    "content-hash": "5c8f62c1855c8b32e2a155f6ba4cba33",
     "packages": [
         {
             "name": "alxmrz/php-sdl2",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/alxmrz/php-sdl2.git",
-                "reference": "04897e8e5b55ad2a9e395b73f264137533511fc2"
+                "reference": "f59cf24f0f585a19c2204c884bfcc9f73a5daaf6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/alxmrz/php-sdl2/zipball/04897e8e5b55ad2a9e395b73f264137533511fc2",
-                "reference": "04897e8e5b55ad2a9e395b73f264137533511fc2",
+                "url": "https://api.github.com/repos/alxmrz/php-sdl2/zipball/f59cf24f0f585a19c2204c884bfcc9f73a5daaf6",
+                "reference": "f59cf24f0f585a19c2204c884bfcc9f73a5daaf6",
                 "shasum": ""
             },
             "require-dev": {
@@ -44,14 +44,57 @@
                 "source": "https://github.com/alxmrz/php-sdl2/tree/main",
                 "issues": "https://github.com/alxmrz/php-sdl2/issues"
             },
-            "time": "2024-05-25T09:53:27+00:00"
+            "time": "2024-07-06T16:31:10+00:00"
+        },
+        {
+            "name": "alxmrz/psyx-engine",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/alxmrz/psyx-engine.git",
+                "reference": "5dbec37a71977ae5d80b26538c71d5df3c33a550"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/alxmrz/psyx-engine/zipball/5dbec37a71977ae5d80b26538c71d5df3c33a550",
+                "reference": "5dbec37a71977ae5d80b26538c71d5df3c33a550",
+                "shasum": ""
+            },
+            "require": {
+                "alxmrz/php-sdl2": "dev-main"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PsyXEngine\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "alxmrz",
+                    "email": "alexandr.moroz97@mail.ru"
+                }
+            ],
+            "description": "PHP game engine",
+            "support": {
+                "source": "https://github.com/alxmrz/psyx-engine/tree/main",
+                "issues": "https://github.com/alxmrz/psyx-engine/issues"
+            },
+            "time": "2024-07-07T08:27:43+00:00"
         }
     ],
     "packages-dev": [],
     "aliases": [],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "stability-flags": {
-        "alxmrz/php-sdl2": 20
+        "alxmrz/psyx-engine": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

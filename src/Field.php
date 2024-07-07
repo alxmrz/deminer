@@ -2,12 +2,12 @@
 
 namespace Deminer;
 
-use Deminer\core\ClickEvent;
-use Deminer\core\Collision;
-use Deminer\core\GameObject;
-use Deminer\core\Image;
-use Deminer\core\Rectangle;
-use Deminer\core\Text;
+use PsyXEngine\ClickEvent;
+use PsyXEngine\Collision;
+use PsyXEngine\GameObject;
+use PsyXEngine\Image;
+use PsyXEngine\Rectangle;
+use PsyXEngine\Text;
 use SDL2\SDLColor;
 use SDL2\SDLRect;
 
@@ -115,6 +115,10 @@ class Field extends GameObject
      */
     public function handleLeftClick(ClickEvent $event): void
     {
+        if ($this->game->isGameOver()) {
+            return;
+        }
+
         $this->isOpen = true;
         if ($this->isMine) {
             $this->renderType = new Image(
@@ -134,24 +138,23 @@ class Field extends GameObject
             $fieldsFound = [];
 
             foreach ($this->game->getFields() as $gameObject) {
-                if ($gameObject instanceof Field) {
-                    if (count($fieldsFound) === 8) {
-                        break;
-                    }
-
-                    if ($this->hasNeighbour($gameObject)) {
-                        if ($gameObject->isOpen) {
-                            $fieldsFound[] = $gameObject;
-                            continue;
-                        }
-
-                        if ($gameObject->isMine) {
-                            $minesCount++;
-                        }
-
-                        $fieldsFound[] = $gameObject;
-                    }
+                if (count($fieldsFound) === 8) {
+                    break;
                 }
+
+                if ($this->hasNeighbour($gameObject)) {
+                    if ($gameObject->isOpen) {
+                        $fieldsFound[] = $gameObject;
+                        continue;
+                    }
+
+                    if ($gameObject->isMine) {
+                        $minesCount++;
+                    }
+
+                    $fieldsFound[] = $gameObject;
+                }
+
             }
 
             if ($minesCount === 0) {

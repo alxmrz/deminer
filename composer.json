@@ -7,10 +7,14 @@
             "email": "alexandr.moroz97@mail.ru"
         }
     ],
+    "minimum-stability": "dev",
     "require": {
-        "alxmrz/php-sdl2": "dev-main"
+        "alxmrz/psyx-engine": "dev-main"
     },
     "repositories": [{
+        "type": "vcs",
+        "url": "https://github.com/alxmrz/psyx-engine"
+    },{
         "type": "vcs",
         "url": "https://github.com/alxmrz/php-sdl2"
     }],

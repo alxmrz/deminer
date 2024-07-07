@@ -3,18 +3,15 @@
 namespace Deminer;
 
 use Closure;
-use Deminer\core\Audio;
-use Deminer\core\ClickEvent;
-use Deminer\core\Collision;
-use Deminer\core\Event;
-use Deminer\core\GameInterface;
-use Deminer\core\GameObject;
-use Deminer\core\KeyPressedEvent;
-use Deminer\core\Renderer;
-use Deminer\ui\Button;
-use Deminer\ui\Element;
-use Deminer\ui\Message;
-use Deminer\ui\MessageBox;
+use PsyXEngine\Audio;
+use PsyXEngine\Event;
+use PsyXEngine\GameInterface;
+use PsyXEngine\GameObjects;
+use PsyXEngine\KeyPressedEvent;
+use PsyXEngine\ui\Button;
+use PsyXEngine\ui\Element;
+use PsyXEngine\ui\Message;
+use PsyXEngine\ui\MessageBox;
 use SDL2\SDLColor;
 use SDL2\SDLRect;
 
@@ -36,10 +33,6 @@ class Game implements GameInterface
         [30, 16, 25],
     ];
 
-    /**
-     * @var GameObject[]
-     */
-    private array $gameObjects = [];
     private ?int $mode = null;
     private bool $isGameStarted = false;
     /**
@@ -48,16 +41,20 @@ class Game implements GameInterface
     private bool $isGameOver = false;
     private bool $isGameWon = false;
     private bool $isFirstFieldOpened = false;
+    private bool $isFlaggedMenuDisplayed = false;
     private ?Audio $audio = null;
+    private GameObjects $gameObjects;
 
-    public function init(): void
+    public function init(GameObjects $gameObjects): void
     {
         $this->isGameOver = false;
-        $this->gameObjects = [];
+        $this->gameObjects = $gameObjects;
         $this->isGameStarted = false;
         $this->isGameWon = false;
         $this->isFirstFieldOpened = false;
         $this->mode = null;
+        $this->audio = new Audio();
+        $this->isFlaggedMenuDisplayed = false;
 
         $this->addMenu();
     }
@@ -85,20 +82,11 @@ class Game implements GameInterface
             $this->startGame();
         }
 
-        $mouseCollision = $event instanceof ClickEvent
-            ? new Collision($event->coords[0], $event->coords[1], 1, 1)
-            : null;
-
         $fieldsCount = 0;
         $minesCount = 0;
         $openedFields = 0;
 
         foreach ($this->gameObjects as $gameObject) {
-            if ($mouseCollision && $gameObject->isCollidable()
-                && $gameObject->getCollision()->isCollidedWith($mouseCollision)) {
-                $gameObject->onClick($event);
-            }
-
             if ($gameObject instanceof Field) {
                 $fieldsCount++;
                 $minesCount += (int)$gameObject->isMine;
@@ -108,25 +96,19 @@ class Game implements GameInterface
 
         $this->isGameWon = $this->isGameStarted && $openedFields === ($fieldsCount - $minesCount);
         if ($this->isGameWon) {
-            $this->audio->play(self::VICTORY_SOUND_PATH);
+            $this->audio->playChunk(self::VICTORY_SOUND_PATH);
         }
     }
-
-    public function draw(Renderer $renderer): void
-    {
-        $renderer->render($this->gameObjects);
-    }
-
-    public function getFields(): array
+    public function getFields(): GameObjects
     {
         return $this->findObjectsByFilter(function ($gameObject) {
             return $gameObject instanceof Field;
         });
     }
 
-    public function findObjectsByFilter(Closure $filter): array
+    public function findObjectsByFilter(Closure $filter): GameObjects
     {
-        return array_values(array_filter($this->gameObjects, $filter));
+        return $this->gameObjects->filter($filter);
     }
 
     public function setGameOver(): void
@@ -136,27 +118,29 @@ class Game implements GameInterface
 
     public function restart(): void
     {
-        $this->init();
+        $this->gameObjects->exchangeArray([]);
+
+        $this->init($this->gameObjects);
     }
 
     private function addMenu(): void
     {
-        $this->gameObjects[] = new MessageBox(
+        $this->gameObjects->add(new MessageBox(
             new SDLRect(300, 100, 300, 500),
             new SDLColor(255, 255, 255, 0)
-        );
+        ));
 
-        $this->gameObjects[] = new Message(
+        $this->gameObjects->add(new Message(
             "Choose size of game field",
             new SDLRect(310, 120, 290, 90),
             new SDLColor(0, 0, 0, 0)
-        );
+        ));
 
-        $this->gameObjects[] = new MessageBox(
+        $this->gameObjects->add(new MessageBox(
             new SDLRect(395, 230, 110, 90),
             new SDLColor(0, 255, 0, 0)
-        );
-        $this->gameObjects[] = new Button(
+        ));
+        $this->gameObjects->add(new Button(
             "8 X 8",
             new SDLRect(400, 225, 100, 100),
             new SDLColor(0, 0, 0, 0),
@@ -164,13 +148,13 @@ class Game implements GameInterface
             function () {
                 $this->mode = self::MOD_8_X_8;
             }
-        );
+        ));
 
-        $this->gameObjects[] = new MessageBox(
+        $this->gameObjects->add(new MessageBox(
             new SDLRect(395, 330, 110, 90),
             new SDLColor(255, 255, 0, 0)
-        );
-        $this->gameObjects[] = new Button(
+        ));
+        $this->gameObjects->add(new Button(
             "16 X 16",
             new SDLRect(400, 330, 100, 100),
             new SDLColor(0, 0, 0, 0),
@@ -178,13 +162,13 @@ class Game implements GameInterface
             function () {
                 $this->mode = self::MOD_16_X_8;
             }
-        );
+        ));
 
-        $this->gameObjects[] = new MessageBox(
+        $this->gameObjects->add(new MessageBox(
             new SDLRect(395, 430, 110, 90),
             new SDLColor(255, 0, 0, 0)
-        );
-        $this->gameObjects[] = new Button(
+        ));
+        $this->gameObjects->add(new Button(
             "30 X 16",
             new SDLRect(400, 430, 100, 100),
             new SDLColor(0, 0, 0, 0),
@@ -192,7 +176,7 @@ class Game implements GameInterface
             function () {
                 $this->mode = self::MOD_30_X_8;
             }
-        );
+        ));
     }
 
     /**
@@ -200,6 +184,17 @@ class Game implements GameInterface
      */
     private function startGame(): void
     {
+        $objects = [];
+
+        foreach ($this->gameObjects as $key => $gameObject) {
+            if ($gameObject instanceof Element) {
+                continue;
+            }
+
+            $objects[$key] = $gameObject;
+        }
+        $this->gameObjects->exchangeArray($objects);
+
         $color = new SDLColor(30, 30, 30, 0);
         $fWidth = $this->modes[$this->mode][2];
         $xCount = $this->modes[$this->mode][0];
@@ -210,35 +205,37 @@ class Game implements GameInterface
                 $field = new Field(new SDLRect($fWidth * $i, $fWidth * $j, $fWidth, $fWidth), $color);
                 $field->game = $this;
 
-                $this->gameObjects[] = $field;
+                $this->gameObjects->add($field);
             }
         }
-
-        $this->gameObjects = $this->findObjectsByFilter(function ($object) {
-            return !($object instanceof Element);
-        });
 
         $this->isGameStarted = true;
     }
 
     private function showGameOverMessage(): void
     {
-        $this->gameObjects[] = new MessageBox(
+        if ($this->isFlaggedMenuDisplayed) {
+            return;
+        }
+
+        $this->gameObjects->add(new MessageBox(
             new SDLRect(95, 130, 310, 180),
             new SDLColor(0, 0, 0, 0)
-        );
+        ));
 
-        $this->gameObjects[] = new Message(
+        $this->gameObjects->add(new Message(
             "GAME OVER!",
             new SDLRect(95, 130, 310, 90),
             new SDLColor(255, 0, 0, 0)
-        );
+        ));
 
-        $this->gameObjects[] = new Message(
+        $this->gameObjects->add(new Message(
             "Press SPACE to restart.",
             new SDLRect(95, 200, 310, 90),
             new SDLColor(255, 0, 0, 0)
-        );
+        ));
+
+        $this->isFlaggedMenuDisplayed = true;
     }
 
     private function isModeSelected(): bool
@@ -248,27 +245,33 @@ class Game implements GameInterface
 
     private function showGameWinMessage(): void
     {
-        $this->gameObjects[] = new MessageBox(
+        if ($this->isFlaggedMenuDisplayed) {
+            return;
+        }
+
+        $this->gameObjects->add(new MessageBox(
             new SDLRect(195, 130, 510, 180),
             new SDLColor(0, 255, 0, 0)
-        );
+        ));
 
-        $this->gameObjects[] = new Message(
+        $this->gameObjects->add(new Message(
             "Congratulations! You are WINNER!",
             new SDLRect(195, 130, 510, 90),
             new SDLColor(0, 0, 0, 0)
-        );
+        ));
 
-        $this->gameObjects[] = new Message(
+        $this->gameObjects->add(new Message(
             "Press SPACE to play again.",
             new SDLRect(195, 210, 510, 90),
             new SDLColor(0, 0, 0, 0)
-        );
+        ));
+
+        $this->isFlaggedMenuDisplayed = true;
     }
 
     public function playAudio(string $audioPath): void
     {
-        $this->audio->play($audioPath);
+        $this->audio->playChunk($audioPath);
     }
 
     public function isFirstFieldOpened(): bool
@@ -280,12 +283,6 @@ class Game implements GameInterface
     {
         $this->isFirstFieldOpened = true;
     }
-
-    public function getMode(): ?int
-    {
-        return $this->mode;
-    }
-
     public function getXFieldsCount(): int
     {
         return $this->modes[$this->mode][0];
@@ -294,11 +291,6 @@ class Game implements GameInterface
     public function getYFieldsCount(): int
     {
         return $this->modes[$this->mode][1];
-    }
-
-    public function setAudio(Audio $audio): void
-    {
-        $this->audio = $audio;
     }
 
     public function initMines(Field $firstOpenedField): void
@@ -311,11 +303,16 @@ class Game implements GameInterface
                 return $gameObject instanceof Field && $gameObject->isMine === false && $gameObject !== $firstOpenedField;
             });
 
-            $fields[rand(0, count($fields) - 1)]->isMine = true;
+            $fields[rand(0, $fields->count() - 1)]->isMine = true;
 
             $minesAvailable--;
         }
 
         $this->setFirstFieldIsOpen();
+    }
+
+    public function isGameOver(): bool
+    {
+        return $this->isGameOver;
     }
 }
